@@ -1,0 +1,65 @@
+DESCIPTION OF OUR APPROACH
+============================
+We divided project into sub-tasks, handled them individually and then integrated the results together:
+ - Creating appropriate raw sockets and make sure they are sending and receiving data without protocol error
+ - Contructing the IP and TCP headers using struct pack
+ - Calculate the checksum of TCP header
+ - implement 3 way handshake 
+ - implement congestion control mechanism
+ - handle out of order packets
+ - tear down the connection after receiving the complete data
+ - verify the checksum of receiving packet
+ - construct the HTTP GET request and verify the header
+ - parse the given URL and extract the Host name and path name
+ - extract body from HTTP response
+ - developed ARP request and response module in parallel
+ 
+ 
+ ARP and ethernet implementation: 
+ - construction of ARP frames such that the destination IP is the IP of the gateway
+ - the gateway IP was calculated using the subnet mask and the IP of the system
+ - the ARP reply was then inspected and the MAC address of the gateway was later found from it
+ - after finding out the MAC address , each and every outbound ethernet frame will have the above determined MAC address
+
+
+ TCP/IP FEATURES IMPLEMENTED:
+==============================
+
+1. Basic HTTP: Constructed a simple HTTP GET request and later verify the response for 200 OK code and extract the body
+
+2. TCP : The following,
+ 
+ - constructing TCP segments and calculating checksums
+ - Intial Handshake mechanism
+ - Congestion control mechanism with initial cwnd = 1 with a timeout functionality
+ - Handling out of order packets 
+ - Verification of checksum of received packets
+ - Graceful teardown
+
+3. IP : 
+ - construction of IP datagrams
+ - receiving IP datagrams and extracting the length, protocol and other fields for checksum verification 
+ 
+4. ARP and Ethernet:
+ - construction of ARP frames
+ - determining the MAC address of the gateway
+ - construction of ethernet packets
+ 
+
+
+ CHALLENGES FACED 
+===================
+
+1. Finding the exact the combo of domain,family and protocol for receiving socket was quite tricky.
+2. Managing the sequence and ack numbers during the communication
+3. Implementing congestion control mechanism was little tricky as well.
+4. Removing the extra characters from the HTTP chunked responses was initially challenging, but got resolved later easily 
+ by using HTTP/1.0
+5. Since the ARP request is a broadcast message and since the receiver socket is in promiscuous mode , there were too many packets being recieved
+ we had to make sure that we picked the right packets that belonged to the response from the gateway , which was later used while constructing 
+ ethernet packets.
+ 
+ TESTING 
+=========
+
+1. Tested with several URLs within college intranet that include 2MB,10MB and 50MB log files too. Verified using diff and md5sum
